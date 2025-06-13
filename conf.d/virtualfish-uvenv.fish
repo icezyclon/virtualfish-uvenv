@@ -1,6 +1,7 @@
 if test -n "$VIRTUALFISH_VERSION"
     set -g UVENV_ECHO_ACTIVATION true
     set -g UVENV_ECHO_DEACTIVATION false
+    set -g UVENV_INVALID_PIP_SHIM true
 
     if functions -q mkvirtualenv
         abbr -a mkvirtualenv mkuvenv

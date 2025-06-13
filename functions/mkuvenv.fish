@@ -20,7 +20,7 @@ function mkuvenv --argument-names cmd --description "Create a uv managed virtual
     set -l rest $argv[2..-1]
     set -l dir "$VIRTUALFISH_HOME/$cmd"
     if test -e "$dir"
-        echo "[plugin: virtualfish-uvenv] venv $cmd already exists" >&2 && return 1
+        echo "[plugin: virtualfish-uvenv] venv $cmd already exists at $dir" >&2 && return 1
     end
 
     if set -q $VIRTUAL_ENV
@@ -36,13 +36,15 @@ function mkuvenv --argument-names cmd --description "Create a uv managed virtual
     echo "[plugin: virtualfish-uvenv] cmd: uv venv . --allow-existing --directory \"$dir\""
     uv venv . --allow-existing --directory "$dir"
 
-    if test ! -e "$dir/bin/pip"
-        echo "[plugin: virtualfish-uvenv] creating pip shim"
-        echo -e "#!/usr/bin/env sh\necho \"Use 'uv pip' instead\"\nexit 1\n" > "$dir/bin/pip"
-        chmod +x "$dir/bin/pip"
-    end
-    if test ! -e "$dir/bin/pip3"
-        ln -s "$dir/bin/pip" "$dir/bin/pip3"
+    if test "$UVENV_INVALID_PIP_SHIM" = true
+        if test ! -e "$dir/bin/pip"
+            echo "[plugin: virtualfish-uvenv] creating invalid pip shim"
+            echo -e "#!/usr/bin/env sh\necho \"Use 'uv pip' instead\"\nexit 1\n" > "$dir/bin/pip"
+            chmod +x "$dir/bin/pip"
+        end
+        if test ! -e "$dir/bin/pip3"
+            ln -s "$dir/bin/pip" "$dir/bin/pip3"
+        end
     end
 
     vf activate "$cmd"

@@ -82,10 +82,11 @@ Finally, other tools (like editors) can use/source the environment as usual and 
 
 ## Settings
 
-| Variable                | Default | Descrption                                        |
-| ----------------------- | ------- | ------------------------------------------------- |
-| UVENV_ECHO_ACTIVATION   | `true`  | Whether to print when a virtualenv is activated   |
-| UVENV_ECHO_DEACTIVATION | `false` | Whether to print when a virtualenv is deactivated |
+| Variable                | Default | Descrption                                                                                                                                  |
+| ----------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| UVENV_ECHO_ACTIVATION   | `true`  | Whether to print when a virtualenv is activated                                                                                             |
+| UVENV_ECHO_DEACTIVATION | `false` | Whether to print when a virtualenv is deactivated                                                                                           |
+| UVENV_INVALID_PIP_SHIM  | `true`  | Whether to create an invalid pip shim with the environment to prevent accidentally using the system pip. (Use `uv pip` or `uv add` instead) |
 
 ## FAQ
 
