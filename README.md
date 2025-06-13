@@ -41,7 +41,7 @@ mkuvenv myenv -p 3.13
 ```
 
 Apart from the new creation command, **everything else stays the same**!
-You can use `virtualfish` to activate, delete, list or otherwise manage your `uv` and regular enironments:
+You can use `virtualfish` to activate, delete, list or otherwise manage your `uv` and regular environments:
 
 ```fish
 # ACTIVATE ENVIRONMENT
@@ -72,7 +72,7 @@ You do *not* have to invoke `uv` to run tools in the activated environment as us
 ```fish
 uv add pre-commit
 which pre-commit
-# ~/.virtualenvs/bin/pre-commit
+# ~/.virtualenvs/myenv/bin/pre-commit
 ```
 
 Instead of `pip` use `uv pip` to install dependencies, or better, if you want to actually add and lock the dependencies use `uv add` because otherwise `uv sync` will remove dependencies that were only installed with `uv pip` instead of added with `uv add`.
@@ -86,13 +86,13 @@ Finally, other tools (like editors) can use/source the environment as usual and 
 | ----------------------- | ------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
 | UVENV_ECHO_ACTIVATION   | `true`  | Whether to print when a virtualenv is activated                                                                                             |
 | UVENV_ECHO_DEACTIVATION | `false` | Whether to print when a virtualenv is deactivated                                                                                           |
-| UVENV_INVALID_PIP_SHIM  | `true`  | Whether to create an invalid pip shim with the environment to prevent accidentally using the system pip. (Use `uv pip` or `uv add` instead) |
+| UVENV_INVALID_PIP_SHIM  | `true`  | Whether to create an invalid pip shim on environment creation to prevent accidentally using the system pip (use `uv pip` or `uv add` instead of `pip`) |
 
 ## FAQ
 
 ### When should I use this plugin?
 
-If you want fully managed `uv` project (with `pyproject.toml` and `uv.lock` files) but **at a centralized location** AND you want to keep using `virtualfish` for managing/activating your environments.
+If you want fully managed `uv` projects (with `pyproject.toml` and `uv.lock` files) but **at a centralized location** AND you want to keep using `virtualfish` for managing/activating your environments.
 
 ### When should I *not* use this plugin?
 
