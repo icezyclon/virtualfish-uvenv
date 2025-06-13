@@ -23,7 +23,7 @@ function mkuvenv --argument-names cmd --description "Create a uv managed virtual
         echo "[plugin: virtualfish-uvenv] venv $cmd already exists at $dir" >&2 && return 1
     end
 
-    if set -q $VIRTUAL_ENV
+    if test -n "$VIRTUAL_ENV"
         vf deactivate
     end
 
