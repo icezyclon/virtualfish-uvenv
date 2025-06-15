@@ -1,8 +1,4 @@
 if test -n "$VIRTUALFISH_VERSION"
-    set -g UVENV_ECHO_ACTIVATION true
-    set -g UVENV_ECHO_DEACTIVATION false
-    set -g UVENV_INVALID_PIP_SHIM true
-
     if functions -q mkvirtualenv
         abbr -a mkvirtualenv mkuvenv
     end
@@ -16,37 +12,51 @@ if test -n "$VIRTUALFISH_VERSION"
     
 
     function _uvenv_vf_activate --on-event virtualenv_did_activate
-        if test -f "$VIRTUAL_ENV/pyproject.toml"
-            if test "$UVENV_ECHO_ACTIVATION" = true
-                echo "uvenv" (set_color cyan)(basename $VIRTUAL_ENV)(set_color normal) "activated"
+        if not set -q _UVENV_ACTIVATED
+            if test -f "$VIRTUAL_ENV/pyproject.toml"
+                if test "$UVENV_ECHO_ACTIVATION" = true
+                    echo "uvenv" (set_color cyan)(basename $VIRTUAL_ENV)(set_color normal) "activated"
+                end
+                set -gx UV_PROJECT $VIRTUAL_ENV
+                set -gx UV_PROJECT_ENVIRONMENT .
+                if abbr -q pip
+                    abbr --rename pip _uvenv_old_pip_abbr
+                end
+                abbr -a pip uv pip
+                set -gx _UVENV_ACTIVATED $VIRTUAL_ENV
+            else if test "$UVENV_ECHO_ACTIVATION" = true
+                echo "regular venv" (set_color green)(basename $VIRTUAL_ENV)(set_color normal) "activated"
             end
-            set -gx UV_PROJECT $VIRTUAL_ENV
-            set -gx UV_PROJECT_ENVIRONMENT .
-            if abbr -q pip
-                abbr --rename pip _uvenv_old_pip_abbr
-            end
-            abbr -a pip uv pip
-        else if test "$UVENV_ECHO_ACTIVATION" = true
-            echo "regular venv" (set_color green)(basename $VIRTUAL_ENV)(set_color normal) "activated"
         end
     end
 
     function _uvenv_vf_deactivate --on-event virtualenv_did_deactivate
-        if test -f "$VIRTUAL_ENV/pyproject.toml"
-            if test "$UVENV_ECHO_DEACTIVATION" = true
-                echo "uvenv" (set_color cyan)(basename $VIRTUAL_ENV)(set_color normal) "deactivated"
+        if set -q _UVENV_ACTIVATED
+            if test -f "$VIRTUAL_ENV/pyproject.toml"
+                if test "$UVENV_ECHO_DEACTIVATION" = true
+                    echo "uvenv" (set_color cyan)(basename $VIRTUAL_ENV)(set_color normal) "deactivated"
+                end
+                set -e UV_PROJECT
+                set -e UV_PROJECT_ENVIRONMENT
+                abbr -e pip
+                if abbr -q _uvenv_old_pip_abbr
+                    abbr --rename _uvenv_old_pip_abbr pip 
+                end
+                set -e _UVENV_ACTIVATED
+            else if test "$UVENV_ECHO_DEACTIVATION" = true
+                echo "regular venv" (set_color green)(basename $VIRTUAL_ENV)(set_color normal) "deactivated"
             end
-            set -e UV_PROJECT
-            set -e UV_PROJECT_ENVIRONMENT
-            abbr -e pip
-            if abbr -q _uvenv_old_pip_abbr
-                abbr --rename _uvenv_old_pip_abbr pip 
-            end
-        else if test "$UVENV_ECHO_DEACTIVATION" = true
-            echo "regular venv" (set_color green)(basename $VIRTUAL_ENV)(set_color normal) "deactivated"
         end
     end
 
+    # for example, if auto_activation already activated an environment: we have to trigger manually here
+    if test -n "$VIRTUAL_ENV"; and contains (basename $VIRTUAL_ENV) (vf ls)
+        _uvenv_vf_activate
+    end
+
+    set -g UVENV_ECHO_ACTIVATION true
+    set -g UVENV_ECHO_DEACTIVATION false
+    set -g UVENV_INVALID_PIP_SHIM true
     set -g _UVENV_LOADED true
 else
     echo "[plugin: virtualfish-uvenv] Virtualfish is not loaded - install with 'vf install', or this plugin may have been loaded before virtualfish-loader."
