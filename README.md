@@ -88,6 +88,8 @@ Finally, other tools (like editors) can use/source the environment as usual and 
 | UVENV_ECHO_DEACTIVATION | `false` | Whether to print when a virtualenv is deactivated                                                                                           |
 | UVENV_INVALID_PIP_SHIM  | `true`  | Whether to create an invalid pip shim on environment creation to prevent accidentally using the system pip (use `uv pip` or `uv add` instead of `pip`) |
 
+If you want to change from the default settings, you can either set the corresponding variable in your `config.fish`, e.g., `set -g UVENV_ECHO_ACTIVATION false`, or, if you want the variables to already be available on loading of the plugin set them as universal instead, e.g., `set -U UVENV_ECHO_ACTIVATION false`. (This is only required if environments may be activated before `config.fish` is loaded, e.g., using `virtualfish`' `auto_activation` plugin)
+
 ## FAQ
 
 ### When should I use this plugin?
